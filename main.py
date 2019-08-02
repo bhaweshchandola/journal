@@ -35,10 +35,18 @@ def login():
     print("Authentication Failed")
     return False
 
+
 def check_entry(username):
     filename = journal_direc +"/"+username+".txt"
-    num_lines = sum(1 for line in open("journals/bh.txt"))
+    num_lines = sum(1 for line in open(filename))
     print(num_lines)
+    if num_lines > 50:
+        with open(filename, 'r') as fin:
+            data = fin.read().splitlines(True)
+        with open(filename, 'w') as fout:
+            fout.writelines(data[1:])
+    return num_lines
+
 
 def journal_entry(username):
     # directory_j = "journals"
