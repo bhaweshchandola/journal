@@ -91,8 +91,17 @@ def journal_entry(username):
     f.write('\n')
     f.close()
 
+
+def journal_show(username):
+    filename = journal_direc + "/" + username + ".txt"
+    f = open(filename)
+    lines = f.read().splitlines()
+    for i in lines:
+        print(i)
+
 # journal_entry(login())
 # check_entry("bh")
 # gen_key()
 # print(encrypt("helllooooo"))
-print(decrypt('gAAAAABdRJgHyL-e2a4fls57915932x4zCb01Mt-_OozscBp6cACuhnv432qO759slrjDwwQR7BQaCdmQt_ycR4RnRzr1YfYzA=='))
+# print(decrypt('gAAAAABdRJgHyL-e2a4fls57915932x4zCb01Mt-_OozscBp6cACuhnv432qO759slrjDwwQR7BQaCdmQt_ycR4RnRzr1YfYzA=='))
+journal_show("bh")
