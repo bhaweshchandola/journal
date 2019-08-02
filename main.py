@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import json
+import datetime
 
 print("hello")
 
@@ -27,10 +28,22 @@ def login():
         temp_info = line.split()
         if user_name == temp_info[0] and password == temp_info[1]:
             print("user authenticated")
-            return True
+            return user_name
 
     print("Authentication Failed")
     return False
 
 
-login()
+def journal_entry(username):
+    directory_j = "journals"
+    if not os.path.exists(directory_j):
+        os.makedirs(directory_j)
+        print("directory made")
+    f = open(directory_j+"/"+username+".txt", 'a+')
+    temp_entry = input("Type your Journal Entry")
+    entry = datetime.datetime.now().strftime("%Y-%m-%d %I:%M:%S %r") + ":" + temp_entry
+    f.write(entry)
+    f.write('\n')
+    f.close()
+
+journal_entry(login())
