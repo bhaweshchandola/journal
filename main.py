@@ -5,6 +5,8 @@ import datetime
 
 print("hello")
 
+journal_direc = "journals"
+users_direc = "users"
 
 def signup():
     user_name = input("Plase Enter your Username")
@@ -33,17 +35,22 @@ def login():
     print("Authentication Failed")
     return False
 
+def check_entry(username):
+    filename = journal_direc +"/"+username+".txt"
+    num_lines = sum(1 for line in open("journals/bh.txt"))
+    print(num_lines)
 
 def journal_entry(username):
-    directory_j = "journals"
-    if not os.path.exists(directory_j):
-        os.makedirs(directory_j)
+    # directory_j = "journals"
+    if not os.path.exists(journal_direc):
+        os.makedirs(journal_direc)
         print("directory made")
-    f = open(directory_j+"/"+username+".txt", 'a+')
+    f = open(journal_direc+"/"+username+".txt", 'a+')
     temp_entry = input("Type your Journal Entry")
-    entry = datetime.datetime.now().strftime("%Y-%m-%d %I:%M:%S %r") + ":" + temp_entry
+    entry = datetime.datetime.now().strftime("%d %b %Y %I.%M%p").lower() + " - " + temp_entry
     f.write(entry)
     f.write('\n')
     f.close()
 
-journal_entry(login())
+# journal_entry(login())
+check_entry("bh")
