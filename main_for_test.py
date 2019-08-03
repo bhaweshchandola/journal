@@ -207,5 +207,3 @@ def main_fun():
             pass
 
     return True
-
-main_fun()
