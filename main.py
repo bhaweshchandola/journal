@@ -26,7 +26,7 @@ def encrypt(inp_str):
     key = open(key_dir+"/key.txt", 'r').readline()
     cipher_suite = Fernet(key)
     encoded_text = cipher_suite.encrypt(inp_str.encode())
-    print(encoded_text)
+    # print(encoded_text)
     return encoded_text.decode()
 
 
@@ -34,13 +34,13 @@ def decrypt(enc_str):
     key = open(key_dir+"/key.txt", 'r').readline()
     cipher_suite = Fernet(key)
     decoded_text = cipher_suite.decrypt(enc_str.encode())
-    print(decoded_text)
+    # print(decoded_text)
     return decoded_text.decode()
 
 
 def signup():
-    user_name = input("Plase Enter your Username")
-    password = input("Please Enter your Password")
+    user_name = input("Plase Enter your Username: ")
+    password = input("Please Enter your Password: ")
 
     if not os.path.exists(users_direc):
         os.makedirs(users_direc)
@@ -64,16 +64,19 @@ def signup():
 
 
 def login():
-    user_name = input("Plase Enter your Username")
-    password = input("Please Enter your Password")
+    user_name = input("Plase Enter your Username: ")
+    password = input("Please Enter your Password: ")
 
     for line in open("users/users.txt", 'r').readlines():
         temp_info = line.split()
         if user_name == temp_info[0] and password == decrypt(temp_info[1]):
-            print("user authenticated")
+            print("**************User Authenticated*************")
+            print("Welcome",user_name)
+            print()
             return user_name
 
-    print("Authentication Failed")
+    print("********Authentication Failed************")
+    print("Try Again")
     return False
 
 
@@ -95,20 +98,25 @@ def journal_entry(username):
         os.makedirs(journal_direc)
         print("directory made")
     f = open(journal_direc+"/"+username+".txt", 'a+')
-    temp_entry = input("Type your Journal Entry")
+    temp_entry = input("Type your Journal Entry\n")
     check_entry(username)
-    entry = datetime.datetime.now().strftime("%d %b %Y %I.%M%p").lower() + " " + temp_entry
-    f.write(entry)
+    entry = datetime.datetime.now().strftime("%d %b %Y %I.%M%p").lower() + " - " + temp_entry
+    f.write(encrypt(entry))
     f.write('\n')
     f.close()
 
 
 def journal_show(username):
     filename = journal_direc + "/" + username + ".txt"
-    f = open(filename)
-    lines = f.read().splitlines()
-    for i in lines:
-        print(i)
+    if os.path.exists(filename):
+        f = open(filename)
+        lines = f.read().splitlines()
+        print()
+        for i in lines:
+            print(decrypt(i))
+        print()
+    else:
+        print("No Entries Found")
 
 # journal_entry(login())
 # check_entry("bh")
@@ -117,4 +125,31 @@ def journal_show(username):
 # print(decrypt(encrypt("helllooooo")))
 # journal_show("bh")
 # signup()
-login()
+# login()
+
+
+def main():
+    main_call = True
+    while main_call:
+        inp = int(input("Press 1 to Login \nPress 2 to Signup \nPress 3 to Exit\n"))
+        
+        if inp == 1:
+            user = login()
+            if user:
+                in_call = True
+                while in_call:
+                    inp1 = int(input("Press 1 to make a journal Entry\nPress 2 to view previous entries\nPress 3 to login as a new user\n"))
+                    if inp1 == 1:
+                        journal_entry(user)
+                    elif inp1 == 2:
+                        journal_show(user)
+                    elif inp1 == 3:
+                        in_call = False
+        elif inp == 2:
+            signup()
+        elif inp == 3:
+            main_call = False
+        else:
+            pass
+
+main()
