@@ -22,12 +22,11 @@ def gen_key():
     return True
 
 
-
 def encrypt(inp_str):
     key = open(key_dir+"/key.txt", 'r').readline()
     cipher_suite = Fernet(key)
     encoded_text = cipher_suite.encrypt(inp_str.encode())
-    
+    print(encoded_text)
     return encoded_text.decode()
 
 
@@ -35,6 +34,7 @@ def decrypt(enc_str):
     key = open(key_dir+"/key.txt", 'r').readline()
     cipher_suite = Fernet(key)
     decoded_text = cipher_suite.decrypt(enc_str.encode())
+    print(decoded_text)
     return decoded_text.decode()
 
 
@@ -42,14 +42,25 @@ def signup():
     user_name = input("Plase Enter your Username")
     password = input("Please Enter your Password")
 
-    directory = "users" 
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+    if not os.path.exists(users_direc):
+        os.makedirs(users_direc)
         print("directory made")
-    f = open(directory+"/users.txt", "a+")
-    user_details = user_name+" "+password + '\n'
-    f.write(user_details)
-    f.close()
+    filename = users_direc + "/users.txt"
+    num_lines = sum(1 for line in open(filename))
+    
+    if num_lines > 15:
+        print("Users limit reached")
+    else:
+        for line in open(filename, 'r').readlines():
+            temp_info = line.split()
+            if user_name == temp_info[0]:
+                print("user already exists")
+                return user_name
+
+        f = open(filename, "a+")
+        user_details = user_name+" "+encrypt(password) + '\n'
+        f.write(user_details)
+        f.close()
 
 
 def login():
@@ -58,7 +69,7 @@ def login():
 
     for line in open("users/users.txt", 'r').readlines():
         temp_info = line.split()
-        if user_name == temp_info[0] and password == temp_info[1]:
+        if user_name == temp_info[0] and password == decrypt(temp_info[1]):
             print("user authenticated")
             return user_name
 
@@ -86,7 +97,7 @@ def journal_entry(username):
     f = open(journal_direc+"/"+username+".txt", 'a+')
     temp_entry = input("Type your Journal Entry")
     check_entry(username)
-    entry = datetime.datetime.now().strftime("%d %b %Y %I.%M%p").lower() + " - " + temp_entry
+    entry = datetime.datetime.now().strftime("%d %b %Y %I.%M%p").lower() + " " + temp_entry
     f.write(entry)
     f.write('\n')
     f.close()
@@ -103,5 +114,7 @@ def journal_show(username):
 # check_entry("bh")
 # gen_key()
 # print(encrypt("helllooooo"))
-# print(decrypt('gAAAAABdRJgHyL-e2a4fls57915932x4zCb01Mt-_OozscBp6cACuhnv432qO759slrjDwwQR7BQaCdmQt_ycR4RnRzr1YfYzA=='))
-journal_show("bh")
+# print(decrypt(encrypt("helllooooo")))
+# journal_show("bh")
+# signup()
+login()
