@@ -60,19 +60,28 @@ def signup():
 
     if not os.path.exists(users_direc):
         os.makedirs(users_direc)
-        print("directory made")
+        # print("directory made")
     filename = users_direc + "/users.txt"
-    num_lines = sum(1 for line in open(filename))
-    
-    if num_lines > 10:
-        print("*********Users limit reached***********")
-    else:
-        for line in open(filename, 'r').readlines():
-            temp_info = line.split()
-            if user_name == temp_info[0]:
-                print("*******User Already Exists*********")
-                return False
 
+    if os.path.exists(filename):
+        num_lines = sum(1 for line in open(filename))
+    
+        if num_lines > 10:
+            print("*********Users limit reached***********")
+        else:
+            for line in open(filename, 'r').readlines():
+                temp_info = line.split()
+                if user_name == temp_info[0]:
+                    print("*******User Already Exists*********")
+                    return False
+
+            f = open(filename, "a+")
+            user_details = user_name+" "+encrypt(password) + '\n'
+            f.write(user_details)
+            f.close()
+            return user_name
+
+    else:
         f = open(filename, "a+")
         user_details = user_name+" "+encrypt(password) + '\n'
         f.write(user_details)
@@ -89,6 +98,9 @@ def login():
     user_name = input("Plase Enter your Username: ")
     password = input("Please Enter your Password: ")
 
+    if not os.path.exists(users_direc + '/users.txt'):
+        print("*****No Users Exists*****\nPlease Sign-up first")
+        return 
     for line in open("users/users.txt", 'r').readlines():
         temp_info = line.split()
         if user_name == temp_info[0] and password == decrypt(temp_info[1]):
@@ -168,6 +180,7 @@ prompts user with option to login, signup or exit
 then prompts user with option to view or create a new journal entry
 '''
 def main_fun():
+    gen_key()
     main_call = True
     user = False
     while main_call:
